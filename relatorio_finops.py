@@ -16,7 +16,7 @@ config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
 
 
 def obter_dados_cloudcheckr():
-    url = "https://app.cloudcheckr.com/api/billing.json/get_billing_summary"
+    url = "https://app.cloudcheckr.com/api/billing.json/get_billing_summary_v4"
     params = {
         "access_key": API_KEY,
         "account_name": ACCOUNT_NAME,
