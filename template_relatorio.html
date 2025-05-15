@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #1a1a1a; }
+        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
+        .seccao { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Relatório Mensal de FinOps – {{ mes }}</h1>
+    
+    <div class="seccao">
+        <h2>Resumo Executivo</h2>
+        <p><strong>Gasto Total do Mês:</strong> R$ {{ custo_total | round(2) }}</p>
+    </div>
+
+    <div class="seccao">
+        <h2>Análise de Custos por Serviço (Top 5)</h2>
+        <table>
+            <tr><th>Serviço</th><th>Valor (R$)</th></tr>
+            {% for item in top_servicos %}
+                <tr><td>{{ item.ServiceName }}</td><td>{{ item.Cost | round(2) }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="seccao">
+        <h2>Custo por Centro de Custo/Projeto</h2>
+        <ul>
+        {% for tag in centros_custo %}
+            <li>{{ tag.TagValue }}: R$ {{ tag.Cost | round(2) }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div class="seccao">
+        <h2>Oportunidades de Otimização</h2>
+        <ul>
+        {% for item in oportunidades %}
+            <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div class="seccao">
+        <h2>Ações Realizadas no Mês</h2>
+        <ul>
+        {% for item in acoes_realizadas %}
+            <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div class="seccao">
+        <h2>Plano de Ações Próximo Mês</h2>
+        <ul>
+        {% for item in plano_proximo %}
+            <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
