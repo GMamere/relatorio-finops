@@ -1,11 +1,13 @@
 import requests
 import pandas as pd
+import os
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 from datetime import datetime
 
-API_KEY = 'SUA_CLOUDCHECKR_API_KEY'
-ACCOUNT_NAME = 'NOME_DA_CONTA'
+API_KEY = os.getenv('CLOUDCHECKR_API_KEY')
+ACCOUNT_NAME = os.getenv('CLOUDCHECKR_ACCOUNT_NAME')
 BASE_URL = 'https://app.cloudcheckr.com/api/billing.json/get_billing_summary'
 
 def obter_dados_cloudcheckr():

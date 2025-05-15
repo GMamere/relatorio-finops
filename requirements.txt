@@ -3,6 +3,7 @@ certifi==2025.4.26
 cffi==1.17.1
 charset-normalizer==3.4.2
 cssselect2==0.8.0
+dotenv==0.9.9
 fonttools==4.58.0
 idna==3.10
 Jinja2==3.1.6
@@ -14,6 +15,7 @@ pycparser==2.22
 pydyf==0.11.0
 pyphen==0.17.2
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.0
 pytz==2025.2
 requests==2.32.3
 six==1.17.0
