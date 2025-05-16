@@ -5,38 +5,71 @@ import pdfkit
 from dotenv import load_dotenv
 from datetime import datetime
 
-# Carrega variáveis do .env
 load_dotenv()
 API_KEY = os.getenv("CLOUDCHECKR_API_KEY")
 ACCOUNT_NAME = os.getenv("CLOUDCHECKR_ACCOUNT_NAME")
 
-# Caminho do wkhtmltopdf no Windows (ajuste se necessário)
 WKHTMLTOPDF_PATH = r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
 config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_PATH)
 
 
 def obter_dados_cloudcheckr():
-    url = "https://app.cloudcheckr.com/api/billing.json/get_billing_summary_v4"
-    params = {
-        "access_key": API_KEY,
-        "account_name": ACCOUNT_NAME,
-        "month": datetime.now().month,
-        "year": datetime.now().year
+    url = "https://api-us.cloudcheckr.com/graphql"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
     }
 
+    month = datetime.now().month
+    year = datetime.now().year
+
+    query = f"""
+    query {{
+        spendOverview(
+            filter: {{
+                accountIds: ["{ACCOUNT_NAME}"],
+                timeRange: {{ type: MONTH_TO_DATE }}
+            }}
+        ) {{
+            totalCost
+            unblendedCost
+            amortizedCost
+            forecastedCost
+            currency
+        }}
+    }}
+    """
+
+
     try:
-        print("🔄 Consultando CloudCheckr...")
-        response = requests.get(url, params=params, timeout=15)
+        print("🔄 Enviando requisição para o CloudCheckr CMx GraphQL...")
+        print("🔍 Payload da requisição:")
+        print(query)
+
+        response = requests.post(url, json={"query": query}, headers=headers, timeout=15)
         response.raise_for_status()
-        print("✅ Dados obtidos da API.")
-        return response.json()
+
+        print("✅ Resposta recebida:")
+        print(response.json())
+
+        data = response.json()['data']['billingSummary']
+        return {
+            "TotalCost": data['totalCost'],
+            "ServiceBreakdown": [
+                {"ServiceName": item['service'], "Cost": item['cost']}
+                for item in data['serviceBreakdown']
+            ],
+            "CostByTag": [
+                {"TagValue": item['tagValue'], "Cost": item['cost']}
+                for item in data['costByTag']
+            ]
+        }
 
     except Exception as e:
-        print(f"⚠️ Erro ao consultar CloudCheckr: {e}")
+        print(f"⚠️ Erro ao consultar CloudCheckr CMx: {e}")
         print("🔁 Usando dados simulados para testes.")
         return obter_dados_falsos_para_teste()
-
-
+        
 def obter_dados_falsos_para_teste():
     return {
         "TotalCost": 34500.00,
